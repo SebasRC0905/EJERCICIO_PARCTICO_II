@@ -197,3 +197,21 @@ function handleTaskKeypress(event) {
 
 taskInput.addEventListener('keypress', handleTaskKeypress);
 dueDateInput.addEventListener('keypress', handleTaskKeypress);
+// ==========================================
+// TAREA 2: Agregar nombres de los integrantes
+// ==========================================
+
+// Seleccionar el pie de la aplicación (footer)
+const appFooter = document.querySelector('.app-footer');
+
+// Crear un nuevo elemento de párrafo para los créditos
+const teamCredits = document.createElement('p');
+
+// Asignar una clase por si el Programador 2 quiere darle estilos después
+teamCredits.className = 'team-credits'; 
+
+// Agregar el texto con los nombres
+teamCredits.innerHTML = '<strong>Integrantes:</strong> Zoe Yeray Cruz Cruz, Montaño Hernandez Edgar, Ruiz Cortes Sebastian y Vargas Mendoza Julian Axel.';
+
+// Insertar el párrafo al final del footer
+appFooter.appendChild(teamCredits);
