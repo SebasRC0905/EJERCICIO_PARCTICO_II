@@ -4,6 +4,8 @@ const prioritySelect = document.getElementById('priority-select');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 const inputSection = document.querySelector('.input-section');
+const taskCounter = document.getElementById('task-counter');
+const clearAllBtn = document.getElementById('clear-all-btn');
 
 // Crear dinámicamente un input para la fecha de vencimiento
 const dueDateInput = document.createElement('input');
@@ -39,6 +41,31 @@ function isOverdue(dateValue) {
     today.setHours(0, 0, 0, 0);
 
     return dueDate < today;
+}
+
+function updateTaskCounter() {
+    const allTasks = Array.from(taskList.querySelectorAll('.task-item'));
+    const completedTasks = allTasks.filter(task => task.querySelector('.task-check').checked).length;
+    const pendingTasks = allTasks.length - completedTasks;
+
+    taskCounter.textContent = `${completedTasks} completadas · ${pendingTasks} pendientes`;
+}
+
+function clearCompletedTasks() {
+    const completedTasks = taskList.querySelectorAll('.task-item .task-check:checked').length;
+
+    if (completedTasks === 0) {
+        return;
+    }
+
+    taskList.querySelectorAll('.task-item').forEach(taskItem => {
+        const checkbox = taskItem.querySelector('.task-check');
+        if (checkbox && checkbox.checked) {
+            taskItem.remove();
+        }
+    });
+
+    updateTaskCounter();
 }
 
 // Función para agregar tareas
@@ -135,9 +162,17 @@ function addTask() {
         // Botón Eliminar
         newTaskItem.querySelector('.delete-btn').addEventListener('click', () => {
             newTaskItem.remove();
+            updateTaskCounter();
+        });
+
+        const taskCheckbox = newTaskItem.querySelector('.task-check');
+        taskCheckbox.addEventListener('change', () => {
+            newTaskItem.classList.toggle('task-completed', taskCheckbox.checked);
+            updateTaskCounter();
         });
 
         taskList.appendChild(newTaskItem);
+        updateTaskCounter();
 
         // Limpiar campos
         taskInput.value = '';
@@ -151,6 +186,7 @@ function addTask() {
 
 // Evento del botón Agregar
 addTaskBtn.addEventListener('click', addTask);
+clearAllBtn.addEventListener('click', clearCompletedTasks);
 
 // Agregar con Enter
 function handleTaskKeypress(event) {
