@@ -8,47 +8,48 @@
 </head>
 <body>
     <main class="app-container">
-        <!-- Encabezado de la App -->
         <header class="app-header">
+            <p class="eyebrow">Gestor de tareas</p>
             <h1>Mis Pendientes</h1>
             <p id="current-date">Organiza tu día de manera eficiente</p>
         </header>
 
-        <!-- Sección para agregar nuevas tareas -->
-        <section class="input-section">
-            <input type="text" id="task-input" placeholder="¿Qué necesitas hacer hoy?" autocomplete="off">
-            <!-- Añadimos un selector para evitar un diseño genérico -->
-            <select id="priority-select">
-                <option value="baja">Baja</option>
-                <option value="media" selected>Media</option>
-                <option value="alta">Alta</option>
-            </select>
-            <button id="add-task-btn">Agregar Tarea</button>
+        <section class="input-section" aria-label="Agregar tarea">
+            <div class="form-grid">
+                <label class="field">
+                    <span>Tarea</span>
+                    <input type="text" id="task-input" placeholder="¿Qué necesitas hacer hoy?" autocomplete="off">
+                </label>
+
+                <label class="field">
+                    <span>Prioridad</span>
+                    <select id="priority-select">
+                        <option value="baja">Baja</option>
+                        <option value="media" selected>Media</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </label>
+
+                <label class="field">
+                    <span>Fecha límite</span>
+                    <input type="date" id="due-date-input" aria-label="Fecha de vencimiento" required>
+                </label>
+
+                <button id="add-task-btn" type="button">Agregar tarea</button>
+            </div>
+            <p class="helper-text">Prioridades permitidas: Baja, Media y Alta.</p>
         </section>
 
-        <!-- Contenedor principal de la lista -->
         <section class="task-list-section">
-            <ul id="task-list">
-                <!-- Las tareas se inyectarán aquí dinámicamente con JavaScript -->
-                
-                <!-- Dejo un ejemplo comentado de cómo debería verse una tarea generada 
-                     para que el equipo sepa qué estructura tendrá: -->
-                <!--
-                <li class="task-item priority-alta">
-                    <label class="task-label">
-                        <input type="checkbox" class="task-check">
-                        <span class="task-text">Terminar la parte 2 del ejercicio</span>
-                    </label>
-                    <button class="delete-btn">Eliminar</button>
-                </li>
-                -->
-            </ul>
+            <div class="section-title">
+                <h2>Tu lista</h2>
+                <span id="task-counter">0 tareas pendientes</span>
+            </div>
+            <ul id="task-list"></ul>
         </section>
 
-        <!-- Pie de la App con estadísticas -->
         <footer class="app-footer">
-            <span id="task-counter">0 tareas pendientes</span>
-            <button id="clear-all-btn">Limpiar completadas</button>
+            <button id="clear-all-btn" type="button">Limpiar completadas</button>
         </footer>
     </main>
 
