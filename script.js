@@ -10,6 +10,7 @@ const dueDateInput = document.createElement('input');
 dueDateInput.type = 'date';
 dueDateInput.id = 'due-date-input';
 dueDateInput.setAttribute('aria-label', 'Fecha de vencimiento');
+
 Object.assign(dueDateInput.style, {
     padding: '0.75rem 1rem',
     border: '1px solid #d1d5db',
@@ -20,13 +21,16 @@ Object.assign(dueDateInput.style, {
     cursor: 'pointer',
     backgroundColor: 'white'
 });
+
 inputSection.insertBefore(dueDateInput, addTaskBtn);
 
+// Formatear la fecha
 function formatDueDate(dateValue) {
     const [year, month, day] = dateValue.split('-');
     return `${day}/${month}/${year}`;
 }
 
+// Verificar si una fecha está vencida
 function isOverdue(dateValue) {
     if (!dateValue) return false;
 
@@ -37,63 +41,118 @@ function isOverdue(dateValue) {
     return dueDate < today;
 }
 
-// Función principal para agregar una tarea
+// Función para agregar tareas
 function addTask() {
-    // 1. Obtener los valores y quitar espacios en blanco
+
     const taskText = taskInput.value.trim();
     const priority = prioritySelect.value;
     const dueDateValue = dueDateInput.value;
 
-    // 2. Validar que el campo no esté vacío
     if (taskText !== '') {
-        // 3. Crear el contenedor principal de la nueva tarea (li)
-        const newTaskItem = document.createElement('li');
 
-        // Le asignamos las clases base y la clase dinámica de prioridad (ej. priority-alta)
+        const newTaskItem = document.createElement('li');
         newTaskItem.className = `task-item priority-${priority}`;
 
         if (dueDateValue && isOverdue(dueDateValue)) {
             newTaskItem.classList.add('task-overdue');
         }
 
-        // 4. Construir la estructura interna de la nueva tarea
         newTaskItem.innerHTML = `
             <label class="task-label">
                 <input type="checkbox" class="task-check">
                 <span class="task-text"></span>
                 <span class="task-due-date"></span>
             </label>
-            <button class="delete-btn">Eliminar</button>
+
+            <div class="task-actions">
+                <button class="edit-btn">Editar</button>
+                <button class="delete-btn">Eliminar</button>
+            </div>
         `;
 
-        // 5. Inyectar el texto y la fecha de vencimiento de forma segura
         newTaskItem.querySelector('.task-text').textContent = taskText;
 
         if (dueDateValue) {
-            newTaskItem.querySelector('.task-due-date').textContent = `Vence: ${formatDueDate(dueDateValue)}`;
+            newTaskItem.querySelector('.task-due-date').textContent =
+                `Vence: ${formatDueDate(dueDateValue)}`;
         }
 
-        // 6. Permitir eliminar la tarea desde su botón
+        // Botón Editar
+        const editBtn = newTaskItem.querySelector('.edit-btn');
+
+        editBtn.addEventListener('click', () => {
+
+            const nuevoTexto = prompt(
+                "Editar la tarea:",
+                newTaskItem.querySelector('.task-text').textContent
+            );
+
+            if (nuevoTexto !== null && nuevoTexto.trim() !== "") {
+                newTaskItem.querySelector('.task-text').textContent = nuevoTexto.trim();
+            }
+
+            const nuevaPrioridad = prompt(
+                "Nueva prioridad (baja, media o alta):",
+                priority
+            );
+
+            if (
+                nuevaPrioridad === "baja" ||
+                nuevaPrioridad === "media" ||
+                nuevaPrioridad === "alta"
+            ) {
+
+                newTaskItem.className = `task-item priority-${nuevaPrioridad}`;
+
+                if (dueDateInput.value && isOverdue(dueDateInput.value)) {
+                    newTaskItem.classList.add("task-overdue");
+                }
+
+            }
+
+            const fechaActual = dueDateValue || "";
+
+            const nuevaFecha = prompt(
+                "Nueva fecha (AAAA-MM-DD):",
+                fechaActual
+            );
+
+            if (nuevaFecha !== null && nuevaFecha !== "") {
+
+                newTaskItem.querySelector('.task-due-date').textContent =
+                    `Vence: ${formatDueDate(nuevaFecha)}`;
+
+                newTaskItem.classList.remove("task-overdue");
+
+                if (isOverdue(nuevaFecha)) {
+                    newTaskItem.classList.add("task-overdue");
+                }
+
+            }
+
+        });
+
+        // Botón Eliminar
         newTaskItem.querySelector('.delete-btn').addEventListener('click', () => {
             newTaskItem.remove();
         });
 
-        // 7. Agregar la tarea terminada a la lista (ul) en el HTML
         taskList.appendChild(newTaskItem);
 
-        // 8. Limpiar los inputs y regresar el selector a su valor por defecto
+        // Limpiar campos
         taskInput.value = '';
         prioritySelect.value = 'media';
         dueDateInput.value = '';
+
     } else {
-        console.warn('El campo de tarea está vacío.');
+        alert("Escribe una tarea antes de agregarla.");
     }
 }
 
-// Escuchar el clic en el botón "Agregar Tarea"
+// Evento del botón Agregar
 addTaskBtn.addEventListener('click', addTask);
 
-// Permitir agregar la tarea presionando la tecla "Enter" desde los inputs
+// Agregar con Enter
 function handleTaskKeypress(event) {
     if (event.key === 'Enter') {
         addTask();
